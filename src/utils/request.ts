@@ -1,75 +1,139 @@
 import { notification } from 'antd';
-import getRequest, { ConfigProps } from 'valor-request';
 import { navigate } from '@reach/router';
 import * as R from 'rambda';
 import * as Rx from 'rambdax';
-import { isPlainObject } from 'valor-app-utils';
 import { appStore } from '../globalStores/AppStore';
-
-export function formatErrorMsg(msg: any) {
-  return isPlainObject(msg)
-    ? msg.errors
-      ? msg.errors.join(', \n')
-      : JSON.stringify(msg.errors)
-    : msg;
-}
+import { extend, RequestOptionsInit } from 'umi-request';
 
 const handleError = Rx.debounce((e: any) => {
   notification.error({
     message: '错误',
-    description: formatErrorMsg(e.errorMsg),
+    description: e.errorMsg,
   });
-}, 400);
+}, 300);
 
-const httpCode: ConfigProps = {
-  timeout: 60 * 1000,
+/// 错误使用http-code返回(对应的情况是总是返回200)
+export function getRequestClassics({ prefix }: { prefix: string }) {
+  const request = extend({
+    prefix,
+    useCache: false,
+    timeout: 15_000,
+    headers: (() => {
+      const token = localStorage.getItem('token');
+      return { Authorization: `Bearer ${token}` };
+    })(),
+    maxCache: 0,
+    ttl: 60_000,
+    credentials: 'omit',
+    // 为true, 则在then里可直接使用原始的response
+    getResponse: true,
+  });
 
-  onError: e => {
-    console.error('后台返回错误:', e);
+  return (
+    url: string,
+    options: RequestOptionsInit = {},
+    /// 如果为true, 则handleError生效, 一般用于弹窗
+    /// 无论为true还是false, 都需抛出错误 ( 如果不throw, 则可能进入 then->catch->then 的then这一步 )
+    useErrorHandler = true,
+  ) => {
+    appStore.beforeLoading();
 
-    if (e.code === 401) navigate('/auth', { replace: true });
+    return request(url, options)
+      .then(result => {
+        appStore.afterLoading();
+        const token = result.response.headers.get('X-Valor-Token');
+        if (token) {
+          localStorage.setItem('token', token);
+        }
 
-    handleError(e);
-  },
+        return processPagedIfPresent(result.data);
+      })
+      .catch(e => {
+        appStore.afterLoading();
+        /// 客户端错
+        const clientErrorResult:
+          | { code: number; errorMsg: string }
+          | undefined = processClientHttpError(e);
+        if (clientErrorResult) {
+          useErrorHandler && handleError(clientErrorResult);
+          return;
+        }
 
-  beforeRequest: appStore.beforeLoading.bind(appStore),
-  afterResponse: appStore.afterLoading.bind(appStore),
-  normalize: (result: any) => {
-    console.log('后台返回 result:', result);
+        /// 服务端错
+        return e.response.json().then((errorBody: any) => {
+          const code = e.response.status;
 
-    if (R.isNil(result)) {
-      console.error('返回result为空, 是否网络错? ');
-      return { code: 502 };
+          const error = errorBody.error || errorBody.errors;
+          const errorMsg = error
+            ? Array.isArray(error)
+              ? error.join(',')
+              : error
+            : '服务端返回未知错误';
+
+          const serverErrorResult = {
+            code,
+            errorMsg,
+          };
+
+          // 处理401
+          if (e.code === 401) {
+            setTimeout(() => {
+              // 让错误显示等生效后再进入/auth
+              navigate('/auth', { replace: true });
+            });
+          }
+
+          useErrorHandler && handleError(serverErrorResult);
+          throw serverErrorResult;
+        });
+      });
+  };
+}
+
+// 打开注释后可测试
+// getRequest({})('/auth/login', {
+//   method: 'post',
+//   data: { account: 'admin', password1: 'admin' },
+// });
+
+function processClientHttpError(e: any) {
+  if (e.name === 'RequestError' && (e.message || '').startsWith('timeout')) {
+    const errorResult = {
+      code: 502,
+      errorMsg: '网络请求超时, 请稍后重试',
+    };
+    return errorResult;
+  }
+
+  if (e.name === 'TypeError') {
+    if (e.message === 'Network request failed') {
+      const errorResult = {
+        code: 1000,
+        errorMsg: '断网了, 请检查网络',
+      };
+      return errorResult;
+    } else {
+      const errorResult = {
+        code: 1000,
+        errorMsg: '网络问题, 可能是跨域引起',
+      };
+      return errorResult;
     }
+  }
+}
 
-    // 统一处理分页
-    // const data =
-    //   result.data && result.data.pageTool ? normalizePagedData(result.data) : result.data;
-
+function processPagedIfPresent(data: any) {
+  if (R.is(Number, data.pageNo)) {
+    // 需要分页
     return {
-      code: 200,
-      data: result,
+      meta: {
+        pageNo: data.pageNo,
+        pageSize: data.pageSize,
+        total: data.total,
+      },
+      entities: data.entities,
     };
-  },
-
-  normalizeHttpError: (code: number, messageBody: any) => {
-    console.error('code', code, 'messageBody', messageBody);
-    return {
-      code,
-      errorMsg: messageBody,
-    };
-  },
-};
-
-// const request = getRequest({...commonParams,   prefix: ApiPath});
-// export default request;
-
-const requestConfigProps = {
-  /// 通过httpCode返回错误码
-  /// 返回值格式: 裸data, 比如: 数组, 数字, json
-  classics: httpCode,
-  /// 总是返回200, 错误码体现在返回值
-  /// 返回值格式: {data,code,msg}
-  // fashion : 总是返回200
-};
-export default requestConfigProps;
+  } else {
+    return data;
+  }
+}

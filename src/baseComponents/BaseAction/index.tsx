@@ -1,11 +1,12 @@
 import * as React from 'react';
-import styles from './index.less';
+import styles from './index.module.less';
 import { HSpacer } from 'valor-random-ui';
 import { observer } from 'mobx-react-lite';
 import { ModalContext } from 'react-promisify-modal';
 import { Button } from 'antd';
 import { toJS } from 'mobx';
 import { confirm } from '../../utils/ui';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 interface Props {
   createConfig?: {
@@ -74,7 +75,7 @@ const Action: React.FC<Props> = ({ createConfig, updateConfig, deleteConfig }) =
     <div className={styles['container']}>
       {createConfig && (
         <>
-          <Button onClick={onCreate} type="primary" icon="plus">
+          <Button onClick={onCreate} type="primary" icon={<PlusOutlined />}>
             {createConfig.title || '新建'}
           </Button>
           <HSpacer size={10} />
@@ -82,14 +83,24 @@ const Action: React.FC<Props> = ({ createConfig, updateConfig, deleteConfig }) =
       )}
       {updateConfig && (
         <>
-          <Button disabled={!updateConfig.entity} onClick={onUpdate} type="default" icon="edit">
+          <Button
+            disabled={!updateConfig.entity}
+            onClick={onUpdate}
+            type="default"
+            icon={<EditOutlined />}
+          >
             {updateConfig.title || '修改'}
           </Button>
           <HSpacer size={10} />
         </>
       )}
       {deleteConfig && (
-        <Button disabled={!deleteConfig.entity} onClick={onDelete} type="default" icon="delete">
+        <Button
+          disabled={!deleteConfig.entity}
+          onClick={onDelete}
+          type="default"
+          icon={<DeleteOutlined />}
+        >
           {deleteConfig.title || '删除'}
         </Button>
       )}

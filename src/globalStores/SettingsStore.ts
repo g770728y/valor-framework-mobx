@@ -1,7 +1,7 @@
 import { action, autorun, observable } from 'mobx';
 interface AppSettings {
   appTitle: string;
-  appIcon: any;
+  appLogo: any;
   pageSize: number;
   menus: { key: string; title: string }[];
 }
@@ -9,8 +9,8 @@ export class SettingsStore {
   @observable
   data: AppSettings = {} as any;
 
-  // @observable
-  // activeMenuKey: string = "";
+  @observable
+  activeMenuKey: string = '';
 
   // 仅表示显示哪些tab
   @observable
@@ -23,14 +23,13 @@ export class SettingsStore {
 
   constructor() {}
 
-  // @action
-  // setActiveMenu = (menuKey: string) => {
-  //   // 确保显示tab
-  //   if (this.tabKeys.indexOf(menuKey) < 0) {
-  //     this.tabKeys.push(menuKey);
-  //   }
-  //   // this.activeMenuKey = menuKey + "";
-  // };
+  @action
+  setActiveMenu = (menuKey: string) => {
+    // 确保显示tab
+    if (this.tabKeys.indexOf(menuKey) < 0) {
+      this.tabKeys.push(menuKey);
+    }
+  };
 }
 
 // settingsStore应该在程序中实例化

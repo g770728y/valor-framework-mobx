@@ -54,6 +54,7 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
       })}
       pagination={pagination}
       {...tableProps}
+      size={'middle'}
     />
   );
 };
