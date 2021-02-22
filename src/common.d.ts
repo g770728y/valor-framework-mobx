@@ -12,3 +12,8 @@ interface IUser {
   name: string;
   account: string;
 }
+
+interface PageRequest {
+  pageNo: number;
+  pageSize: number;
+}
