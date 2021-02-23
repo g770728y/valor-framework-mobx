@@ -17,6 +17,6 @@ interface PageMeta {
 }
 
 interface Paged<T = any> {
-  entities: T;
+  entities: T[];
   meta: PageMeta;
 }

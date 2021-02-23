@@ -136,7 +136,7 @@ abstract class SingleTreeModel<T extends BaseTreeNode> extends DisposableModel {
   };
 
   @action
-  resetPaged = (result: Paged<T[]>) => {
+  resetPaged = (result: Paged<T>) => {
     this.resetTree(this.normalize(result.entities));
     const newMeta = {
       pageNo: result.meta.pageNo || 1,

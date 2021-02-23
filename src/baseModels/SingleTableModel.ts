@@ -48,9 +48,9 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
   abstract delete(id?: ID): void;
 
   @computed
-  get selected() {
+  get selected(): T | null | undefined {
     const selectedId = this.data.selection.length > 0 ? this.data.selection[0] : null;
-    return selectedId && this.data.entities.find(entity => entity.id === selectedId);
+    return selectedId ? this.data.entities.find(entity => entity.id === selectedId) : null;
   }
 
   // 用途: 在创建新记录前, 最好先clear一下
@@ -103,7 +103,7 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
   };
 
   @action
-  resetPaged = (result: Paged<T[]>) => {
+  resetPaged = (result: Paged<T>) => {
     this.resetEntities(result.entities);
     const newMeta = {
       pageNo: result.meta.pageNo || 1,
