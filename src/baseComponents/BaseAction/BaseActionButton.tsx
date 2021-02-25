@@ -19,9 +19,11 @@ class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
   }
 
   handleClick() {
-    const { DialogComponent } = this.props;
+    const { buttonProps, DialogComponent } = this.props;
     const { openModal } = this.context!;
-    openModal!(args => <DialogComponent {...args} />);
+    if (!buttonProps?.disabled) {
+      openModal!(args => <DialogComponent {...args} />);
+    }
   }
 
   render() {
@@ -33,7 +35,7 @@ class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
     const { title, Icon, ...restProps } = props;
 
     return htmlType === 'a' ? (
-      <a onClick={this.handleClick}>
+      <a onClick={this.handleClick} style={{ color: props.disabled ? '#ccc' : undefined }}>
         {Icon && <Icon />}
         {title}
       </a>

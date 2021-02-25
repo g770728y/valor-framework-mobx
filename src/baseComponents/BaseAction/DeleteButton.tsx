@@ -17,19 +17,21 @@ export class DeleteButton extends React.Component<DeleteButtonProps> {
   }
 
   handleClick() {
-    const { msg, onSubmit } = this.props;
-    confirm(msg || '删除后不可恢复。是否确定删除?').then(result => {
-      if (result) {
-        onSubmit();
-      }
-    });
+    const { msg, onSubmit, buttonProps } = this.props;
+    if (!buttonProps?.disabled) {
+      confirm(msg || '删除后不可恢复。是否确定删除?').then(result => {
+        if (result) {
+          onSubmit();
+        }
+      });
+    }
   }
 
   render() {
     const props = { ...propsByAction.delete, ...this.props.buttonProps };
     const { title, Icon, ...restProps } = props;
     return this.props.htmlType === 'a' ? (
-      <a onClick={this.handleClick}>
+      <a onClick={this.handleClick} style={{ color: props.disabled ? '#ccc' : undefined }}>
         {Icon && <Icon />}
         {title}
       </a>
