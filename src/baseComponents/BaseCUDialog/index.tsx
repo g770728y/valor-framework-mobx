@@ -54,7 +54,7 @@ const BaseCUDialog: React.FC<Props> = ({
         wrapperCol={17}
         effects={effectsGetter && effectsGetter(actions)}
         onSubmit={(v: any) => {
-          if (submitting.current) return;
+          if (submitting.current) return Promise.resolve();
 
           submitting.current = true;
           const vv = normalize({ ...values, ...v });

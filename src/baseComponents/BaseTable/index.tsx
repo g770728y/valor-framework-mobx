@@ -53,8 +53,8 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
         onClick: () => selectable && resetSelectedRowKeys([record.id]),
       })}
       pagination={pagination}
-      {...tableProps}
       size={'middle'}
+      {...tableProps}
     />
   );
 };

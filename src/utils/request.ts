@@ -18,10 +18,6 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
     prefix,
     useCache: false,
     timeout: 15_000,
-    headers: (() => {
-      const token = localStorage.getItem('token');
-      return { Authorization: `Bearer ${token}` };
-    })(),
     maxCache: 0,
     ttl: 60_000,
     credentials: 'omit',
@@ -31,12 +27,20 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
 
   return (
     url: string,
-    options: RequestOptionsInit = {},
+    _options: RequestOptionsInit = {},
     /// 如果为true, 则handleError生效, 一般用于弹窗
     /// 无论为true还是false, 都需抛出错误 ( 如果不throw, 则可能进入 then->catch->then 的then这一步 )
     useErrorHandler = true,
   ) => {
     appStore.beforeLoading();
+
+    const options = {
+      ..._options,
+      headers: (() => {
+        const token = localStorage.getItem('token');
+        return { Authorization: `Bearer ${token}` };
+      })(),
+    };
 
     return request(url, options)
       .then(result => {
@@ -76,7 +80,7 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
           };
 
           // 处理401
-          if (e.code === 401) {
+          if (code === 401) {
             setTimeout(() => {
               // 让错误显示等生效后再进入/auth
               navigate('/auth', { replace: true });

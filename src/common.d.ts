@@ -1,4 +1,4 @@
-type ID = string;
+type ID = number | string;
 
 interface CurrentUser {
   id: ID;

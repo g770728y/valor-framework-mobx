@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 export const formatDate = (t: any): string => dayjs(t).format('YYYY-MM-DD');
+export const formatDateTime = (t: any): string => dayjs(t).format('YYYY-MM-DD HH:mm:ss');
 
 /**
  * 将2001-01-01 转为 ms

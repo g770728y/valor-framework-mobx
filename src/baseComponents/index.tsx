@@ -1,5 +1,5 @@
-import BaseAction from './BaseAction';
+import { BaseActionButton, DeleteButton } from './BaseAction';
 import BaseCUDialog from './BaseCUDialog';
 import BaseTable from './BaseTable';
 
-export { BaseAction, BaseCUDialog, BaseTable };
+export { BaseCUDialog, BaseTable, BaseActionButton, DeleteButton };
