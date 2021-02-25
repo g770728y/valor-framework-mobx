@@ -79,8 +79,8 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
             errorMsg,
           };
 
-          // 处理401
-          if (code === 401) {
+          // 处理401 (注意: loginByToken时显然不需要navigate)
+          if (useErrorHandler && code === 401) {
             setTimeout(() => {
               // 让错误显示等生效后再进入/auth
               navigate('/auth', { replace: true });
@@ -140,4 +140,13 @@ function processPagedIfPresent(data: any) {
   } else {
     return data;
   }
+}
+
+export function mapPageEntities<F, T>(mapf: (f: F) => T) {
+  return (pageData: Paged<F>): Paged<T> => {
+    return {
+      ...pageData,
+      entities: pageData.entities.map(mapf),
+    };
+  };
 }

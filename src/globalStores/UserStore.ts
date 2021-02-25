@@ -1,7 +1,7 @@
 import { action, computed, observable, reaction } from 'mobx';
 import { navigate } from '@reach/router';
 import DisposableModel from '../baseModels/DisposableModel';
-import * as rgac from '../rbac';
+import * as rbac from '../rbac';
 
 interface UserStoreData {
   currentUser?: CurrentUser;
@@ -10,14 +10,20 @@ interface UserStoreData {
 export class UserStore extends DisposableModel {
   private loginF: (userInput: any) => Promise<CurrentUser>;
   private logoutF: () => Promise<void>;
+  private loginByTokenF: (token: string) => Promise<CurrentUser>;
 
   @observable
   data: UserStoreData = {};
 
-  constructor(loginF: (userInput: any) => Promise<CurrentUser>, logoutF: () => Promise<void>) {
+  constructor(
+    loginF: (userInput: any) => Promise<CurrentUser>,
+    loginByTokenF: (token: string) => Promise<CurrentUser>,
+    logoutF: () => Promise<void>,
+  ) {
     super();
     this.loginF = loginF;
     this.logoutF = logoutF;
+    this.loginByTokenF = loginByTokenF;
     this.disposers.push(
       reaction(
         () => !(this.data && this.data.currentUser),
@@ -28,10 +34,6 @@ export class UserStore extends DisposableModel {
         },
       ),
     );
-
-    this.fetch().then(() => {
-      if (!this.data.currentUser) navigate('/auth', { replace: true });
-    });
   }
 
   @computed
@@ -39,8 +41,22 @@ export class UserStore extends DisposableModel {
     return !!this.data.currentUser;
   }
 
-  init = () => {
-    this.fetch();
+  loginByToken = (): Promise<any> => {
+    const self = this;
+    const token = rbac.getToken();
+    if (token) {
+      return this.loginByTokenF(token)
+        .then(result => {
+          self.resetCurrentUser(result);
+        })
+        .catch(e => {
+          throw new Error(e);
+        });
+    } else {
+      return Promise.resolve().then(() => {
+        throw new Error('不存在token');
+      });
+    }
   };
 
   login = (user: any) => {
@@ -53,18 +69,13 @@ export class UserStore extends DisposableModel {
     const self = this;
     self.logoutF().then(() => {
       self.data = {};
+      rbac.removeCurrentUser();
     });
   };
 
   @action
   resetCurrentUser = (currentUser: CurrentUser) => {
     this.data.currentUser = currentUser;
-  };
-
-  fetch = () => {
-    const self = this;
-    return Promise.resolve().then(() => {
-      self.resetCurrentUser(rgac.getCurrentUser());
-    });
+    rbac.setCurrentUser(currentUser);
   };
 }

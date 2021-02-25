@@ -8,6 +8,10 @@ export function isAuthorized(_authority: string | string[], user: CurrentUser): 
   return roles.some(it => authority.includes(it));
 }
 
+export function getToken(): string | null {
+  return localStorage.getItem('token');
+}
+
 export function getCurrentUser(): CurrentUser {
   const str = localStorage.getItem('current-user');
   return str && JSON.parse(str);
