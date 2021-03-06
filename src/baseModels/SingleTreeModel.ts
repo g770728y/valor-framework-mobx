@@ -2,7 +2,7 @@ import { observable, action, computed, toJS } from 'mobx';
 import { findTreeNode, max, tree2Array, array2tree_byLevel } from 'valor-app-utils';
 import { TreeRootID } from '../constants';
 import DisposableModel from './DisposableModel';
-import * as R from 'rambda';
+import * as R from 'rambdax';
 
 interface SingleTreeModelData<T extends BaseTreeNode> {
   tree: T;

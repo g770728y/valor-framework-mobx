@@ -1,6 +1,5 @@
 import { observable, computed, action, toJS, reaction } from 'mobx';
-import * as RX from 'rambdax';
-import * as R from 'rambda';
+import * as R from 'rambdax';
 import DisposableModel from './DisposableModel';
 import { settingsStore } from '../globalStores/SettingsStore';
 
@@ -26,7 +25,7 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
 
   constructor() {
     super();
-    this.fetchByDebounce = RX.debounce(() => this.fetch(), 300);
+    this.fetchByDebounce = R.debounce(() => this.fetch(), 300);
     this.clearQueriesAndMeta = this.clearQueriesAndMeta.bind(this);
 
     // hack: settimeout的目的: 确保子类的getPageParams抽象方法加载上来

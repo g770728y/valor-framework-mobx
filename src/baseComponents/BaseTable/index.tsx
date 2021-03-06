@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ColumnProps } from 'antd/lib/table';
-import { RowSelectionType, TablePaginationConfig } from 'antd/lib/table/interface';
+import { ColumnProps } from 'antd/es/table';
+import { RowSelectionType, TablePaginationConfig } from 'antd/es/table/interface';
 import { Table, TableProps } from 'antd';
 import { observer } from 'mobx-react';
 

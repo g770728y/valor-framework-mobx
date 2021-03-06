@@ -1,3 +1,4 @@
+export const TmpID = -10000;
 export const TreeRootID = 0;
 
 export const formLayout = {

@@ -1,11 +1,10 @@
 import { notification } from 'antd';
 import { navigate } from '@reach/router';
-import * as R from 'rambda';
-import * as Rx from 'rambdax';
+import * as R from 'rambdax';
 import { appStore } from '../globalStores/AppStore';
 import { extend, RequestOptionsInit } from 'umi-request';
 
-const handleError = Rx.debounce((e: any) => {
+const handleError = R.debounce((e: any) => {
   notification.error({
     message: '错误',
     description: e.errorMsg,

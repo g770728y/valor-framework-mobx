@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Modal, Alert } from 'antd';
 import { nop } from 'valor-app-utils';
 import { SchemaForm, createFormActions, FormSlot, ISchemaFormActions } from '@formily/antd';
-import * as R from 'rambda';
+import * as R from 'rambdax';
 
 interface Props {
   title?: string;
