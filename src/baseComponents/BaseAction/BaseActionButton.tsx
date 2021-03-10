@@ -8,6 +8,7 @@ export type BaseActionButtonProps = {
   buttonProps?: ButtonProps;
   DialogComponent: any;
   htmlType?: 'button' | 'a';
+  dialogProps?: object;
 };
 class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
   static contextType = ModalContext;
@@ -19,10 +20,10 @@ class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
   }
 
   handleClick() {
-    const { buttonProps, DialogComponent } = this.props;
+    const { buttonProps, DialogComponent, dialogProps } = this.props;
     const { openModal } = this.context!;
     if (!buttonProps?.disabled) {
-      openModal!(args => <DialogComponent {...args} />);
+      openModal!(args => <DialogComponent {...args} {...dialogProps} />);
     }
   }
 

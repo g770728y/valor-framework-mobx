@@ -6,6 +6,7 @@ interface Identity {
 
 interface BaseTreeNode extends Identity {
   pid?: ID;
+  index: number;
   children?: BaseTreeNode[];
 }
 

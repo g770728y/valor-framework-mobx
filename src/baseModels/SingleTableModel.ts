@@ -115,6 +115,15 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
   getEntity(id: ID): T | undefined {
     return this.data.entities.find(it => it!.id === id);
   }
+
+  getEntityIndex(id: ID): number {
+    return this.data.entities.findIndex(it => it.id === id);
+  }
+
+  getSelectedIndex(): number {
+    if (!this.selected) return -1;
+    return this.getEntityIndex(this.selected.id);
+  }
 }
 
 export default SingleTableModel;

@@ -1,4 +1,5 @@
 import { dbg } from './debug';
+import { tojs } from './mobx';
 
 import { getRequestClassics, mapPageEntities } from './request';
 
@@ -15,4 +16,5 @@ export {
   formatDateTime,
   confirm,
   mapPageEntities,
+  tojs,
 };

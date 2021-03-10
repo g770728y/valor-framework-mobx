@@ -1,5 +1,5 @@
 export const TmpID = -10000;
-export const TreeRootID = 0;
+export const TreeRootID = -1;
 
 export const formLayout = {
   common: {
