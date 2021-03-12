@@ -1,4 +1,5 @@
 import { dbg } from './debug';
+import { wrapModalProvider } from './hoc';
 import { tojs } from './mobx';
 
 import { getRequestClassics, mapPageEntities } from './request';
@@ -17,4 +18,5 @@ export {
   confirm,
   mapPageEntities,
   tojs,
+  wrapModalProvider,
 };

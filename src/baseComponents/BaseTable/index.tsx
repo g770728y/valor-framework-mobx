@@ -10,8 +10,8 @@ interface Props {
   columns: ColumnProps<any>[];
   selectedRowKeys: ID[];
   resetSelectedRowKeys: (keys: ID[]) => void;
-  patchMeta: (info: { pageNo?: number; pageSize?: number }) => void;
-  meta: PageMeta;
+  patchMeta?: (info: { pageNo?: number; pageSize?: number }) => void;
+  meta?: PageMeta;
 }
 
 const BaseTable: React.FC<Props & TableProps<any>> = ({
@@ -33,15 +33,18 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
   };
 
   const onChange = (pagination: TablePaginationConfig) => {
-    patchMeta({ pageNo: pagination.current });
+    patchMeta && patchMeta({ pageNo: pagination.current });
   };
 
-  const pagination: TablePaginationConfig = {
-    defaultCurrent: meta.pageNo,
-    current: meta.pageNo,
-    pageSize: meta.pageSize,
-    total: meta.total,
-  };
+  const pagination: TablePaginationConfig | false = meta
+    ? {
+        defaultCurrent: meta.pageNo,
+        current: meta.pageNo,
+        pageSize: meta.pageSize,
+        total: meta.total,
+      }
+    : false;
+
   return (
     <Table
       rowKey="id"
