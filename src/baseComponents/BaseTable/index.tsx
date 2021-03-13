@@ -12,6 +12,7 @@ interface Props {
   resetSelectedRowKeys: (keys: ID[]) => void;
   patchMeta?: (info: { pageNo?: number; pageSize?: number }) => void;
   meta?: PageMeta;
+  onDoubleClick?: (keys: ID[]) => void;
 }
 
 const BaseTable: React.FC<Props & TableProps<any>> = ({
@@ -22,6 +23,7 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
   resetSelectedRowKeys,
   patchMeta,
   meta,
+  onDoubleClick,
   ...tableProps
 }) => {
   const rowSelection = {
@@ -54,6 +56,7 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
       onChange={onChange}
       onRow={(record: any) => ({
         onClick: () => selectable && resetSelectedRowKeys([record.id]),
+        onDoubleClick: () => selectable && onDoubleClick && onDoubleClick([record.id]),
       })}
       pagination={pagination}
       size={'middle'}
