@@ -112,6 +112,23 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
     this.resetMeta(newMeta);
   };
 
+  @action
+  deleteEntity = (id: ID) => {
+    this.data.entities = this.data.entities.filter(it => it.id !== id);
+  };
+
+  @action
+  createEntity = (entity: T) => {
+    this.data.entities = [entity, ...this.data.entities];
+  };
+
+  @action
+  patchEntity = (id: ID, entity: Partial<T>) => {
+    const index = this.data.entities.findIndex(it => it.id === id);
+    const newEntity = { ...this.data.entities[index], ...entity };
+    this.data.entities = R.update(index, newEntity, this.data.entities) as T[];
+  };
+
   getEntity(id: ID): T | undefined {
     return this.data.entities.find(it => it!.id === id);
   }
