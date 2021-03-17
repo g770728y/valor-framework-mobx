@@ -12,14 +12,14 @@ abstract class MasterSlave_TableModel<
   constructor() {
     super();
     // 必须等初始化完成再调用
-    setTimeout(() => {
-      this.fetchSlaveWhenMasterChange();
-    }, 0);
+    // setTimeout(() => {
+    //   this.fetchSlaveWhenMasterChange();
+    // }, 0);
     this.dispose = this.dispose.bind(this);
   }
 
   // 当Master改变时, 重新提取slave的数据. 请使用 computed(() => ...) 风格
-  abstract fetchSlaveWhenMasterChange(): void;
+  // abstract fetchSlaveWhenMasterChange(): void;
 
   dispose() {
     super.dispose();

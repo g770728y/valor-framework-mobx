@@ -1,5 +1,5 @@
 import SingleTreeModel from './SingleTreeModel';
-import SingleTableModel from './SingleTableModel';
+import SinglePageTableModel from './SinglePageTableModel';
 import DisposableModel from './DisposableModel';
 
 abstract class MasterSlave_TreeTableModel<
@@ -8,7 +8,7 @@ abstract class MasterSlave_TreeTableModel<
 > extends DisposableModel {
   // 避免子类在使用时类型为SingleTreeModel / SingleTableModel
   abstract master: SingleTreeModel<M>;
-  abstract slave: SingleTableModel<S>;
+  abstract slave: SinglePageTableModel<S>;
 
   constructor() {
     super();
