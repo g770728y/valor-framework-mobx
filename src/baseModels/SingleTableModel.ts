@@ -71,6 +71,7 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
   @action
   createEntity = (entity: T, idx = 0 /*默认放到顶部*/) => {
     this.data.entities = insertIndex(this.data.entities, idx, entity);
+    this.resetSelection([entity.id]);
   };
 
   @action
