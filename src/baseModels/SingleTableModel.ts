@@ -65,7 +65,14 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
 
   @action
   deleteEntity = (id: ID) => {
+    const idx = this.data.entities.findIndex(it => it.id === id);
+    const nextIdx = idx === this.data.entities.length - 1 ? idx - 1 : idx;
+    const nextId = this.data.entities[nextIdx]?.id;
+
     this.data.entities = this.data.entities.filter(it => it.id !== id);
+    if (this.data.entities.length > 0 && nextIdx >= 0) {
+      this.resetSelection([nextId!]);
+    }
   };
 
   @action
