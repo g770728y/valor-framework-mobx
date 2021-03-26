@@ -1,4 +1,4 @@
-import { action, computed, observable, reaction } from 'mobx';
+import { action, computed, observable, reaction, runInAction } from 'mobx';
 import { navigate } from '@reach/router';
 import DisposableModel from '../baseModels/DisposableModel';
 import * as rbac from '../rbac';
@@ -67,9 +67,11 @@ export class UserStore extends DisposableModel {
   @action
   logout = () => {
     const self = this;
-    self.logoutF().then(() => {
-      self.data = {};
-      rbac.removeCurrentUser();
+    return self.logoutF().then(() => {
+      runInAction(() => {
+        // self.data = {};
+        rbac.removeCurrentUser();
+      });
     });
   };
 

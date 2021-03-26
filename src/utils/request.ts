@@ -59,7 +59,7 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
           | undefined = processClientHttpError(e);
         if (clientErrorResult) {
           useErrorHandler && handleError(clientErrorResult);
-          return;
+          throw clientErrorResult;
         }
 
         /// 服务端错
@@ -118,7 +118,8 @@ function processClientHttpError(e: any) {
     } else {
       const errorResult = {
         code: 1000,
-        errorMsg: '网络问题, 可能是跨域引起',
+        // 也有可能由跨域引起
+        errorMsg: '服务器没有响应, 可能正在停机维护',
       };
       return errorResult;
     }

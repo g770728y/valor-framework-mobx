@@ -23,4 +23,5 @@ export function setCurrentUser(user: CurrentUser) {
 
 export function removeCurrentUser() {
   localStorage.removeItem('current-user');
+  localStorage.removeItem('token');
 }
