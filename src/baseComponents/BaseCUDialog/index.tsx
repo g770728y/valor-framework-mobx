@@ -59,15 +59,21 @@ const BaseCUDialog: React.FC<Props> = ({
           submitting.current = true;
           const vv = normalize({ ...values, ...v });
           if (onSubmit) {
-            return onSubmit(vv)
-              .then((result: any) => onOk(result))
-              .catch(e => {
-                setState({ errorMsg: e.errorMsg });
-                throw e;
-              })
-              .finally(() => {
-                submitting.current = false;
-              });
+            try {
+              return onSubmit(vv)
+                .then((result: any) => onOk(result))
+                .catch(e => {
+                  setState({ errorMsg: e.errorMsg || e.message || e });
+                  throw e;
+                })
+                .finally(() => {
+                  submitting.current = false;
+                });
+            } catch (e) {
+              // 可能在onSubmit中直接throw, 比如validation
+              setState({ errorMsg: e.errorMsg || e.message || e });
+              throw e;
+            }
           }
         }}
         actions={actions}

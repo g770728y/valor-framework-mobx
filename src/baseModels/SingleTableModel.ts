@@ -3,6 +3,7 @@ import * as R from 'rambdax';
 import DisposableModel from './DisposableModel';
 import { settingsStore } from '../globalStores/SettingsStore';
 import { insertIndex } from 'valor-app-utils';
+import { tojs } from '../utils';
 
 export interface SingleTableModelData<T extends Identity> {
   queries: Partial<T> & { [k: string]: any };
@@ -79,6 +80,14 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
   createEntity = (entity: T, idx = 0 /*默认放到顶部*/) => {
     this.data.entities = insertIndex(this.data.entities, idx, entity);
     this.resetSelection([entity.id]);
+  };
+
+  @action
+  createEntities = (entities: T[]) => {
+    console.log('creaetEntities', entities, tojs(this.data.entities));
+    this.data.entities = [...entities, ...this.data.entities];
+    console.log(3);
+    this.resetSelection([this.data.entities[0].id]);
   };
 
   @action

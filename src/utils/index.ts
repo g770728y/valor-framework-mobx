@@ -2,7 +2,7 @@ import { dbg } from './debug';
 import { wrapModalProvider } from './hoc';
 import { tojs } from './mobx';
 
-import { getRequestClassics, mapPageEntities } from './request';
+import { getRequestClassics, getRequestPopular, mapPageEntities } from './request';
 
 import { getTime, getDateRange, formatDate, formatDateTime } from './time';
 
@@ -11,6 +11,7 @@ import { confirm } from './ui';
 export {
   dbg,
   getRequestClassics,
+  getRequestPopular,
   getTime,
   getDateRange,
   formatDate,

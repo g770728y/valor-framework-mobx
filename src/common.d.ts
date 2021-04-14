@@ -1,10 +1,12 @@
 type ID = number | string;
 
-interface CurrentUser {
+interface CurrentUser<U = any> {
   id: ID;
   account: string;
   name: string;
   roles: string[];
+  // 这里可以保存后台返回的用户
+  user?: U;
 }
 
 interface IUser {

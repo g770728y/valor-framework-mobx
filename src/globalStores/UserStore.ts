@@ -48,6 +48,7 @@ export class UserStore extends DisposableModel {
       return this.loginByTokenF(token)
         .then(result => {
           self.resetCurrentUser(result);
+          return result;
         })
         .catch(e => {
           throw new Error(e);

@@ -1,17 +1,10 @@
-import { notification } from 'antd';
 import { navigate } from '@reach/router';
 import * as R from 'rambdax';
-import { appStore } from '../globalStores/AppStore';
+import { appStore } from '../../globalStores/AppStore';
 import { extend, RequestOptionsInit } from 'umi-request';
+import { handleError, processClientHttpError, processPagedIfPresent } from './common';
 
-const handleError = R.debounce((e: any) => {
-  notification.error({
-    message: '错误',
-    description: e.errorMsg,
-  });
-}, 300);
-
-/// 错误使用http-code返回(对应的情况是总是返回200)
+/// 错误使用http-code返回
 export function getRequestClassics({ prefix }: { prefix: string }) {
   const request = extend({
     prefix,
@@ -84,6 +77,7 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
               // 让错误显示等生效后再进入/auth
               navigate('/auth', { replace: true });
             });
+            return;
           }
 
           useErrorHandler && handleError(serverErrorResult);
@@ -94,59 +88,7 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
 }
 
 // 打开注释后可测试
-// getRequest({})('/auth/login', {
+// getRequestClassic({})('/auth/login', {
 //   method: 'post',
 //   data: { account: 'admin', password1: 'admin' },
 // });
-
-function processClientHttpError(e: any) {
-  if (e.name === 'RequestError' && (e.message || '').startsWith('timeout')) {
-    const errorResult = {
-      code: 502,
-      errorMsg: '网络请求超时, 请稍后重试',
-    };
-    return errorResult;
-  }
-
-  if (e.name === 'TypeError') {
-    if (e.message === 'Network request failed') {
-      const errorResult = {
-        code: 1000,
-        errorMsg: '断网了, 请检查网络',
-      };
-      return errorResult;
-    } else {
-      const errorResult = {
-        code: 1000,
-        // 也有可能由跨域引起
-        errorMsg: '服务器没有响应, 可能正在停机维护',
-      };
-      return errorResult;
-    }
-  }
-}
-
-function processPagedIfPresent(data: any) {
-  if (R.is(Number, data.pageNo)) {
-    // 需要分页
-    return {
-      meta: {
-        pageNo: data.pageNo,
-        pageSize: data.pageSize,
-        total: data.total,
-      },
-      entities: data.entities,
-    };
-  } else {
-    return data;
-  }
-}
-
-export function mapPageEntities<F, T>(mapf: (f: F) => T) {
-  return (pageData: Paged<F>): Paged<T> => {
-    return {
-      ...pageData,
-      entities: pageData.entities.map(mapf),
-    };
-  };
-}

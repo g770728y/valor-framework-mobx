@@ -9,4 +9,8 @@ export const formLayout = {
   tail: {
     wrapperCol: { offset: 4, span: 20 },
   },
+  nolabel: {
+    labelCol: { span: 0 },
+    wrapperCol: { span: 24 },
+  },
 };
