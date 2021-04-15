@@ -46,15 +46,25 @@ abstract class SingleTreeModel<T extends BaseTreeNode> extends DisposableModel {
     return tree2Array(this.data.tree);
   };
 
-  abstract fetch(): Promise<void>;
-  abstract delete(): Promise<void> | undefined;
-  abstract update(entity: Partial<T>): Promise<void>;
-  abstract create(entity: Partial<T>): Promise<T>;
-  abstract swap(params: { id: ID; [key: string]: any }[]): Promise<void>;
+  fetch = (): Promise<void> => {
+    throw new Error('not implemented');
+  };
+  delete = (): Promise<void> | undefined => {
+    throw new Error('not implemented');
+  };
+  update = (entity: Partial<T>): Promise<void> => {
+    throw new Error('not implemented');
+  };
+  create = (entity: Partial<T>): Promise<T> => {
+    throw new Error('not implemented');
+  };
+  swap = (params: { id: ID; [key: string]: any }[]): Promise<void> => {
+    throw new Error('not implemented');
+  };
 
-  getDefaultSelection(): ID[] {
+  getDefaultSelection = (): ID[] => {
     return [];
-  }
+  };
 
   @action
   resetTree = (tree: T) => {
@@ -106,9 +116,9 @@ abstract class SingleTreeModel<T extends BaseTreeNode> extends DisposableModel {
     this.resetTree(this.list2tree(entities));
   };
 
-  getTreeNode(id: ID): T | undefined {
+  getTreeNode = (id: ID): T | undefined => {
     return findTreeNode(this.data.tree as any, node => node.id + '' === id + '') as any;
-  }
+  };
 
   @action
   onSelect = (id: ID) => {
@@ -116,7 +126,7 @@ abstract class SingleTreeModel<T extends BaseTreeNode> extends DisposableModel {
   };
 
   // 创建选中节点的最后一个孩子
-  createChild(values: Partial<T>) {
+  createChild = (values: Partial<T>) => {
     if (this.loading) return;
 
     const selectedItem = this.selected;
@@ -140,14 +150,14 @@ abstract class SingleTreeModel<T extends BaseTreeNode> extends DisposableModel {
         return item;
       });
     }
-  }
+  };
 
-  getRootId() {
+  getRootId = () => {
     return TreeRootID;
-  }
+  };
 
   // 创建下一个相邻节点
-  createAdjacent(values: Partial<T>) {
+  createAdjacent = (values: Partial<T>) => {
     if (this.loading) return;
 
     if (this.isEmpty) {
@@ -180,7 +190,7 @@ abstract class SingleTreeModel<T extends BaseTreeNode> extends DisposableModel {
         });
       }
     }
-  }
+  };
 
   getNode = (id: ID): T => {
     return findTreeNode(this.data.tree, (item: any) => item.id === id)! as T;

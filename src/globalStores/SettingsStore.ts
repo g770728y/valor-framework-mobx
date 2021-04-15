@@ -4,6 +4,8 @@ interface AppSettings {
   appLogo: any;
   pageSize: number;
   menus: { key: string; title: string; component: any }[];
+  //是否支持顶部tabs
+  useTabs?: boolean;
 }
 export class SettingsStore {
   @observable
@@ -25,14 +27,18 @@ export class SettingsStore {
 
   @action
   setActiveMenu = (menuKey: string) => {
-    // 不允许出现的
-    if ((this.data.menus || []).map(it => it.key).indexOf(menuKey) < 0) return;
+    if (this.data.useTabs) {
+      // 不允许出现的
+      if ((this.data.menus || []).map(it => it.key).indexOf(menuKey) < 0) return;
 
-    // 确保显示tab
-    const index = this.tabKeys.indexOf(menuKey);
-    if (index < 0) {
-      this.tabKeys.push(menuKey);
-      this.activeMenuKey = menuKey;
+      // 确保显示tab
+      const index = this.tabKeys.indexOf(menuKey);
+      if (index < 0) {
+        this.tabKeys.push(menuKey);
+        this.activeMenuKey = menuKey;
+      } else {
+        this.activeMenuKey = menuKey;
+      }
     } else {
       this.activeMenuKey = menuKey;
     }

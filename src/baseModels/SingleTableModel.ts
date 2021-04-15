@@ -19,15 +19,21 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
     selection: [],
   };
 
-  abstract getPageParams(): any;
+  getPageParams = (): any => {
+    throw new Error('not implemented');
+  };
 
   constructor() {
     super();
   }
 
-  abstract fetch(): void;
+  fetch = (): Promise<void> => {
+    throw new Error('not implemented');
+  };
 
-  abstract delete(id?: ID): void;
+  delete = (id?: ID): Promise<any> => {
+    throw new Error('not implemented');
+  };
 
   @computed
   get selected(): T | null | undefined {
@@ -97,18 +103,18 @@ abstract class SingleTableModel<T extends Identity> extends DisposableModel {
     this.data.entities = R.update(index, newEntity, this.data.entities) as T[];
   };
 
-  getEntity(id: ID): T | undefined {
+  getEntity = (id: ID): T | undefined => {
     return this.data.entities.find(it => it!.id === id);
-  }
+  };
 
-  getEntityIndex(id: ID): number {
+  getEntityIndex = (id: ID): number => {
     return this.data.entities.findIndex(it => it.id === id);
-  }
+  };
 
-  getSelectedIndex(): number {
+  getSelectedIndex = (): number => {
     if (!this.selected) return -1;
     return this.getEntityIndex(this.selected.id);
-  }
+  };
 }
 
 export default SingleTableModel;

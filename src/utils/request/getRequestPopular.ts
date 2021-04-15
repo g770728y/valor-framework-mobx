@@ -13,10 +13,16 @@ type NormalizedResult<T = any> = {
 };
 export function getRequestPopular({
   prefix,
+  isOk,
   normalize,
+  getHeaders,
+  toPage,
 }: {
   prefix: string;
+  isOk?: (data: NormalizedResult) => boolean;
   normalize?: (result: any) => NormalizedResult;
+  getHeaders?: () => void;
+  toPage?: (data: any) => Paged | any;
 }) {
   const request = extend({
     prefix,
@@ -40,27 +46,28 @@ export function getRequestPopular({
 
     const options = {
       ..._options,
-      headers: (() => {
-        const token = localStorage.getItem('token');
-        return { Authorization: `Bearer ${token}` };
-      })(),
+      headers:
+        getHeaders?.() ||
+        (() => {
+          const token = localStorage.getItem('token');
+          return { Authorization: `Bearer ${token}` };
+        })(),
     };
+
+    const _isOk = isOk || ((data: NormalizedResult) => data.status >= 200 && data.status < 300);
 
     return request(url, options)
       .then(({ response, data: rawData }) => {
         appStore.afterLoading();
         if (response.ok) {
           const data: NormalizedResult = (normalize || R.identity)(rawData);
-          console.log('response,', response, rawData, data);
-          if (data.status >= 200 && data.status < 300 && !data.message) {
-            console.log(11);
+          if (_isOk(data)) {
             const token = response.headers.get('X-Valor-Token');
             if (token) {
               localStorage.setItem('token', token);
             }
-            return processPagedIfPresent(data.data);
+            return (toPage || processPagedIfPresent)(data.data);
           } else {
-            console.log(21);
             const token = response.headers.get('X-Valor-Token');
             if (useErrorHandler && data.status === 401) {
               setTimeout(() => {
@@ -82,7 +89,6 @@ export function getRequestPopular({
         // e有两种: request返回的e, 及上面throw serverErrorResult 返回的e
 
         if (e.code && e.errorMsg) {
-          console.log(31);
           //这是第一种情况: 服务端返回的不是200
           useErrorHandler && handleError(e);
           throw e;
