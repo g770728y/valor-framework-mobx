@@ -29,15 +29,15 @@ export class DeleteButton extends React.Component<DeleteButtonProps> {
 
   render() {
     const props = { ...propsByAction.delete, ...this.props.buttonProps };
-    const { title, Icon, ...restProps } = props;
+    const { title, icon = null, ...restProps } = props;
     return this.props.htmlType === 'a' ? (
       <a onClick={this.handleClick} style={{ color: props.disabled ? '#ccc' : undefined }}>
-        {Icon && <Icon />}
+        {icon}
         {title}
       </a>
     ) : (
       <Button onClick={this.handleClick} {...restProps}>
-        {Icon && <Icon />}
+        {icon}
         {title}
       </Button>
     );

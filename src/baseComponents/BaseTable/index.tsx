@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { ColumnProps } from 'antd/es/table';
-import { RowSelectionType, TablePaginationConfig } from 'antd/es/table/interface';
+import {
+  RowSelectionType,
+  TablePaginationConfig,
+  TableRowSelection,
+} from 'antd/es/table/interface';
 import { Table, TableProps } from 'antd';
 import { observer } from 'mobx-react';
 
@@ -12,7 +16,9 @@ interface Props {
   resetSelectedRowKeys: (keys: ID[]) => void;
   patchMeta?: (info: { pageNo?: number; pageSize?: number }) => void;
   meta?: PageMeta;
+  selectType?: 'radio' | 'checkbox';
   onDoubleClick?: (keys: ID[]) => void;
+  renderSelectionCell?: TableRowSelection<any>['renderCell'];
 }
 
 const BaseTable: React.FC<Props & TableProps<any>> = ({
@@ -24,14 +30,17 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
   patchMeta,
   meta,
   onDoubleClick,
+  selectType = 'radio',
+  renderSelectionCell,
   ...tableProps
 }) => {
-  const rowSelection = {
+  const rowSelection: TableProps<any>['rowSelection'] = {
     selectedRowKeys,
     onChange(selectedRowKeys: any[]) {
       selectable && resetSelectedRowKeys(selectedRowKeys);
     },
-    type: 'radio' as RowSelectionType,
+    type: selectType,
+    renderCell: renderSelectionCell || undefined,
   };
 
   const onChange = (pagination: TablePaginationConfig) => {

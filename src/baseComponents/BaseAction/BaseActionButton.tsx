@@ -44,11 +44,11 @@ class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
       actionType && (propsByAction as any)[actionType]
         ? { ...(propsByAction as any)[actionType], ...this.props.buttonProps }
         : this.props.buttonProps;
-    const { title, Icon, ...restProps } = props;
+    const { title, icon = null, ...restProps } = props;
 
     return htmlType === 'a' ? (
       <a onClick={this.handleClick} style={{ color: props.disabled ? '#ccc' : undefined }}>
-        {Icon && <Icon />}
+        {icon}
         {title}
       </a>
     ) : overlay ? (
@@ -57,12 +57,12 @@ class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
         {...dissoc(restProps, ['block'])}
         overlay={overlay}
       >
-        {Icon && <Icon />}
+        {icon}
         {title}
       </Dropdown.Button>
     ) : (
       <Button onClick={this.handleClick} {...restProps}>
-        {Icon && <Icon />}
+        {icon}
         {title}
       </Button>
     );

@@ -22,7 +22,15 @@ const CrudPageLayout: React.FC<Props> = ({ query, action, table, slave, style })
       {slave ? (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div style={{ flex: 'auto', height: 10, overflowY: 'auto' }}>{mainContent}</div>
-          <div style={{ flex: 'none', height: 350, boxShadow: '0px 0px 5px #ddd' }}>{slave}</div>
+          <div
+            style={{
+              flex: 'none',
+              height: 350,
+              borderTop: '5px solid #ccc' /*boxShadow: '0px 0px 5px #ddd'*/,
+            }}
+          >
+            {slave}
+          </div>
         </div>
       ) : (
         mainContent

@@ -9,6 +9,7 @@ interface Props {
   values?: any;
   show: boolean;
   onOk: (r: any) => void;
+  // 注意这个方法, 必须在dialog内部拿到并运行
   onSubmit?: (result?: any) => Promise<any>;
   onCancel?: () => void;
   // 在submit前进行normalize
