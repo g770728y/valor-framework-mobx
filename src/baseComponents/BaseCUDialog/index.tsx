@@ -5,6 +5,7 @@ import { SchemaForm, createFormActions, FormSlot, ISchemaFormActions } from '@fo
 import * as R from 'rambdax';
 
 interface Props {
+  className?: string;
   title?: string;
   values?: any;
   show: boolean;
@@ -21,6 +22,7 @@ interface Props {
 
 // create 与 update 没有本质区别, 不过通常 create传来的props.values={} ( 并非总是如此 )
 const BaseCUDialog: React.FC<Props> = ({
+  className = '',
   title,
   values,
   show,
@@ -48,6 +50,7 @@ const BaseCUDialog: React.FC<Props> = ({
       onCancel={onCancel}
       okText="保存"
       cancelText="取消"
+      className={className}
     >
       <SchemaForm
         defaultValue={values || {}}
