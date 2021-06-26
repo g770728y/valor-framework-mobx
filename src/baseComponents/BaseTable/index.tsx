@@ -19,6 +19,8 @@ interface Props {
   selectType?: 'radio' | 'checkbox';
   onDoubleClick?: (keys: ID[]) => void;
   renderSelectionCell?: TableRowSelection<any>['renderCell'];
+  // 控制checkbox的props, 比如disabled
+  getCheckboxProps?: (record: any) => any;
 }
 
 const BaseTable: React.FC<Props & TableProps<any>> = ({
@@ -32,6 +34,7 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
   onDoubleClick,
   selectType = 'radio',
   renderSelectionCell,
+  getCheckboxProps,
   ...tableProps
 }) => {
   const rowSelection: TableProps<any>['rowSelection'] = {
@@ -41,6 +44,7 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
     },
     type: selectType,
     renderCell: renderSelectionCell || undefined,
+    getCheckboxProps,
   };
 
   const onChange = (pagination: TablePaginationConfig) => {

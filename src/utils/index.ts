@@ -8,6 +8,8 @@ import { getTime, getDateRange, formatDate, formatDateTime } from './time';
 
 import { confirm } from './ui';
 
+import { delay } from './promise';
+
 export {
   dbg,
   getRequestClassics,
@@ -20,4 +22,5 @@ export {
   mapPageEntities,
   tojs,
   wrapModalProvider,
+  delay,
 };

@@ -4,6 +4,7 @@ export type HBoxProps = {
   h?: 'l' | 'c' | 'r';
   v?: 't' | 'c' | 'b';
   style?: any;
+  className?: string;
 };
 
 export const HBox: React.FC<HBoxProps> = props => {
@@ -24,6 +25,7 @@ export const HBox: React.FC<HBoxProps> = props => {
   return (
     <div
       style={{ display: 'flex', flexDirection: 'row', justifyContent, alignItems, ...props.style }}
+      className={props.className}
     >
       {props.children}
     </div>

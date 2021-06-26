@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Modal, Alert } from 'antd';
+import { Modal, Alert, ModalProps } from 'antd';
 import { nop } from 'valor-app-utils';
 import { SchemaForm, createFormActions, FormSlot, ISchemaFormActions } from '@formily/antd';
 import * as R from 'rambdax';
+import { IAntdSchemaFormProps } from '@formily/antd-components/esm/types';
 
 interface Props {
   className?: string;
@@ -18,6 +19,8 @@ interface Props {
   // 从外部获取effects
   effectsGetter?: (action: any) => any;
   actions?: ISchemaFormActions;
+  dialogProps?: Partial<ModalProps>;
+  formProps?: Partial<IAntdSchemaFormProps>;
 }
 
 // create 与 update 没有本质区别, 不过通常 create传来的props.values={} ( 并非总是如此 )
@@ -33,6 +36,8 @@ const BaseCUDialog: React.FC<Props> = ({
   effectsGetter,
   normalize = R.identity,
   actions: actions_,
+  dialogProps,
+  formProps,
 }) => {
   const actionsRef = React.useRef<ISchemaFormActions>(actions_ || createFormActions());
   const actions = actionsRef.current;
@@ -51,12 +56,16 @@ const BaseCUDialog: React.FC<Props> = ({
       okText="保存"
       cancelText="取消"
       className={className}
+      {...dialogProps}
     >
       <SchemaForm
         defaultValue={values || {}}
         labelCol={5}
         wrapperCol={17}
         effects={effectsGetter && effectsGetter(actions)}
+        onValuesChange={() => {
+          setState(s => ({ ...s, errorMsg: null }));
+        }}
         onSubmit={(v: any) => {
           if (submitting.current) return Promise.resolve();
 
@@ -81,6 +90,7 @@ const BaseCUDialog: React.FC<Props> = ({
           }
         }}
         actions={actions}
+        {...formProps}
       >
         {state.errorMsg && (
           <FormSlot name="alert">

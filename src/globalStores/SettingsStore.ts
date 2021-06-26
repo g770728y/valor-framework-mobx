@@ -1,5 +1,9 @@
 import { action, autorun, observable } from 'mobx';
+import * as R from 'rambdax';
+
 interface AppSettings {
+  // 用于@reach/router
+  basePath: string;
   appTitle: string;
   appLogo: any;
   pageSize: number;
@@ -21,6 +25,11 @@ export class SettingsStore {
   @action
   init(props: AppSettings) {
     this.data = props;
+  }
+
+  get basePath() {
+    const basePath = this.data.basePath || '';
+    return basePath.endsWith('/') ? R.dropLast(1, basePath) : basePath;
   }
 
   constructor() {}

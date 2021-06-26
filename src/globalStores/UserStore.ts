@@ -2,6 +2,7 @@ import { action, computed, observable, reaction, runInAction } from 'mobx';
 import { navigate } from '@reach/router';
 import DisposableModel from '../baseModels/DisposableModel';
 import * as rbac from '../rbac';
+import { settingsStore } from './SettingsStore';
 
 interface UserStoreData {
   currentUser?: CurrentUser;
@@ -29,7 +30,7 @@ export class UserStore extends DisposableModel {
         () => !(this.data && this.data.currentUser),
         currentUserNotExists => {
           if (currentUserNotExists) {
-            navigate('/auth', { replace: true });
+            navigate(`${settingsStore.basePath}/auth`, { replace: true });
           }
         },
       ),
@@ -69,10 +70,10 @@ export class UserStore extends DisposableModel {
   logout = () => {
     const self = this;
     return self.logoutF().then(() => {
-      runInAction(() => {
-        // self.data = {};
-        rbac.removeCurrentUser();
-      });
+      // runInAction(() => {
+      // self.data = {};
+      rbac.removeCurrentUser();
+      // });
     });
   };
 

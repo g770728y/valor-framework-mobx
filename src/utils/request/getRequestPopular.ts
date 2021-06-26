@@ -4,6 +4,7 @@ import * as R from 'rambdax';
 import { appStore } from '../../globalStores/AppStore';
 import { extend, RequestOptionsInit } from 'umi-request';
 import { handleError, processClientHttpError, processPagedIfPresent } from './common';
+import { settingsStore } from '../../globalStores/SettingsStore';
 
 /// 总是返回200, result like {status:201, message:"", data: any}
 type NormalizedResult<T = any> = {
@@ -17,17 +18,19 @@ export function getRequestPopular({
   normalize,
   getHeaders,
   toPage,
+  unAuthorizedCodes = [],
 }: {
   prefix: string;
   isOk?: (data: NormalizedResult) => boolean;
   normalize?: (result: any) => NormalizedResult;
   getHeaders?: () => void;
   toPage?: (data: any) => Paged | any;
+  unAuthorizedCodes: number[];
 }) {
   const request = extend({
     prefix,
     useCache: false,
-    timeout: 15_000,
+    timeout: 15_000 * 4,
     maxCache: 0,
     ttl: 60_000,
     credentials: 'omit',
@@ -72,7 +75,7 @@ export function getRequestPopular({
             if (useErrorHandler && data.status === 401) {
               setTimeout(() => {
                 // 让错误显示等生效后再进入/auth
-                navigate('/auth', { replace: true });
+                navigate(`${settingsStore.basePath}/auth`, { replace: true });
               });
               return {};
             }
@@ -90,8 +93,15 @@ export function getRequestPopular({
 
         if (e.code && e.errorMsg) {
           //这是第一种情况: 服务端返回的不是200
-          useErrorHandler && handleError(e);
-          throw e;
+          if (useErrorHandler && (e.code === 401 || unAuthorizedCodes.includes(e.code))) {
+            setTimeout(() => {
+              navigate(`${settingsStore.basePath}/auth`, { replace: true });
+            });
+            return;
+          } else {
+            useErrorHandler && handleError(e);
+            throw e;
+          }
         }
 
         // 以下是第二种情况: 客户端错
@@ -118,7 +128,7 @@ export function getRequestPopular({
 }
 
 // 打开注释后可测试
-// getRequestPopular({ prefix: 'http://117.78.28.239/digitcons/v1' })('/user/auth/login', {
+// getRequestPopular({ prefix: 'http://117.78.28.239/digitcons/v1' })('${settingsStore.basePath}/user/auth/login', {
 //   method: 'post',
 //   data: { account: 'admi', password: 'admin' },
 // });

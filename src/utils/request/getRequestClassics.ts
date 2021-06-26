@@ -3,13 +3,14 @@ import * as R from 'rambdax';
 import { appStore } from '../../globalStores/AppStore';
 import { extend, RequestOptionsInit } from 'umi-request';
 import { handleError, processClientHttpError, processPagedIfPresent } from './common';
+import { settingsStore } from '../../globalStores/SettingsStore';
 
 /// 错误使用http-code返回
 export function getRequestClassics({ prefix }: { prefix: string }) {
   const request = extend({
     prefix,
     useCache: false,
-    timeout: 15_000,
+    timeout: 15_000 * 4,
     maxCache: 0,
     ttl: 60_000,
     credentials: 'omit',
@@ -75,7 +76,7 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
           if (useErrorHandler && code === 401) {
             setTimeout(() => {
               // 让错误显示等生效后再进入/auth
-              navigate('/auth', { replace: true });
+              navigate(`${settingsStore.basePath}/auth`, { replace: true });
             });
             return;
           }
@@ -88,7 +89,7 @@ export function getRequestClassics({ prefix }: { prefix: string }) {
 }
 
 // 打开注释后可测试
-// getRequestClassic({})('/auth/login', {
+// getRequestClassic({})(`${settingsStore.basePath}/auth/login`, {
 //   method: 'post',
 //   data: { account: 'admin', password1: 'admin' },
 // });

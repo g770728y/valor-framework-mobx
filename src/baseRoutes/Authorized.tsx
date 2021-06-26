@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Redirect } from '@reach/router';
 import { isAuthorized } from '../rbac';
+import { settingsStore } from '../globalStores';
 
 interface Props {
   user: CurrentUser;
@@ -24,7 +25,7 @@ export const Authorized: React.FC<Props> = ({
   return isAuthorized(authority, user) ? (
     <>{children}</>
   ) : noMatch === undefined ? (
-    <Redirect to="/auth" />
+    <Redirect to={`${settingsStore.basePath}/auth`} />
   ) : (
     noMatch
   );

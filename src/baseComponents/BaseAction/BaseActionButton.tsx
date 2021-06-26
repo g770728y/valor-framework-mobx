@@ -9,7 +9,10 @@ export type BaseActionButtonProps = {
   buttonProps?: ButtonProps;
   DialogComponent: any;
   htmlType?: 'button' | 'a';
+  // 对话框将收到的props
   dialogProps?: object;
+  // 对话框将收到的异步props, 需要先resolve, 再打开对话框, 并将参数传入
+  dialogAsyncProps?: () => Promise<object>;
   // 下拉菜单, 参见antd.Button的文档
   overlay?: React.ReactNode;
   // 对话框完成后的动作, 常用于多级对话框
@@ -28,13 +31,14 @@ class BaseActionButton_ extends React.Component<BaseActionButtonProps, any> {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick() {
+  async handleClick() {
     const { buttonProps, DialogComponent, dialogProps, onComplete } = this.props;
     const { openModal } = this.context!;
     if (!buttonProps?.disabled) {
-      openModal!(args => <DialogComponent {...args} {...dialogProps} />).then((result: any) =>
-        onComplete?.(result),
-      );
+      const asyncProps = this.props.dialogAsyncProps ? await this.props.dialogAsyncProps() : {};
+      openModal!(args => (
+        <DialogComponent {...args} {...dialogProps} {...asyncProps} />
+      )).then((result: any) => onComplete?.(result));
     }
   }
 
