@@ -48,7 +48,7 @@ const BaseTable: React.FC<Props & TableProps<any>> = ({
   };
 
   const onChange = (pagination: TablePaginationConfig) => {
-    patchMeta && patchMeta({ pageNo: pagination.current });
+    patchMeta && patchMeta({ pageNo: pagination.current, pageSize: pagination.pageSize || 10 });
   };
 
   const pagination: TablePaginationConfig | false = meta
